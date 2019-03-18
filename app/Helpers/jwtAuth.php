@@ -27,7 +27,7 @@ class JwtAuth {
 
             $signup = false;
 
-            if(is_object($signup)){
+            if(is_object($user)){
                 $signup = true;
             }
 
@@ -42,12 +42,13 @@ class JwtAuth {
                     'surname' => $user->surname,
                     'iat' => time(),
                     'exp' => time() + (7 * 24 * 60 * 60)
+                    // 'exp' => time() + 10
                 );
 
                 $jwt = JWT::encode($token, $this->key, 'HS256');
-                $decoded = JWT::decoded($jwt, $this->key, array('HS256'));
+                $decoded = JWT::decode($jwt, $this->key, array('HS256'));
 
-                if(!is_null($getToken)) {
+                if(is_null($getToken)) {
 
                     return $jwt;
 
@@ -78,7 +79,7 @@ class JwtAuth {
             $auth = false;
         }
 
-        if(is_object($decoded) && isset($decoded->sub) ){
+        if( isset($decoded) && is_object($decoded) && isset($decoded->sub) ){
             $auth = true;
         } else {
             $auth = false;
